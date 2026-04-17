@@ -1,19 +1,28 @@
 <main>
   <h1>Jogo da Velha</h1>
 
-  <div class="status">Vez do jogador: <span class="player">X</span></div>
+  @if (winner()) {
+    <div class="status winner">Jogador <span [ngClass]="winner()!.toLowerCase()">{{ winner() }}</span> venceu!</div>
+  } @else if (isDraw()) {
+    <div class="status draw">Empate!</div>
+  } @else {
+    <div class="status">Vez do jogador: <span [ngClass]="currentPlayer().toLowerCase()">{{ currentPlayer() }}</span></div>
+  }
 
   <div class="board">
-    <button class="cell"></button>
-    <button class="cell"></button>
-    <button class="cell"></button>
-    <button class="cell"></button>
-    <button class="cell x">X</button>
-    <button class="cell"></button>
-    <button class="cell"></button>
-    <button class="cell o">O</button>
-    <button class="cell"></button>
+    @for (cell of board(); track $index) {
+      <button
+        class="cell"
+        [ngClass]="{
+          'x': cell === 'X',
+          'o': cell === 'O',
+          'winning': winningCells().includes($index),
+          'disabled': !!cell || !!winner()
+        }"
+        (click)="play($index)"
+      >{{ cell }}</button>
+    }
   </div>
 
-  <button class="restart">Reiniciar</button>
+  <button class="restart" (click)="restart()">Reiniciar</button>
 </main>
